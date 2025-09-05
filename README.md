@@ -1,63 +1,65 @@
 # 1Panel-Tools
 
-## Overview
+[英文](README_en.md) ｜ [中文](README.md)
+## 概述
 
-1Panel-Tools is a specialized toolkit designed to simplify the process of creating applications for the 1Panel AppStore. The primary tool in this collection is the Docker Compose to 1Panel AppStore converter, which transforms standard Docker Compose files into the format required by the 1Panel AppStore.
+1Panel-Tools 是一个专门设计的工具集，旨在简化为 1Panel AppStore 创建应用程序的过程。该集合中的主要工具是 Docker Compose 到 1Panel AppStore 的转换器，它将标准的 Docker Compose 文件转换为 1Panel AppStore 所需的格式。
 
 ![1Panel-Tools](./public/1Panel-Tools.png) 
-## Features
 
-- **Docker Compose Conversion**: Automatically convert Docker Compose files to 1Panel AppStore format
-- **Parameter Configuration**: Easily define and manage application parameters
-- **Metadata Management**: Set application name, description, tags, and other metadata
-- **Multi-language Support**: Configure descriptions in both English and Chinese
-- **Export Functionality**: Download the converted files ready for 1Panel AppStore submission
+## 功能特点
 
-## Getting Started
+- **Docker Compose 转换**：自动将 Docker Compose 文件转换为 1Panel AppStore 格式
+- **参数配置**：轻松定义和管理应用程序参数
+- **元数据管理**：设置应用程序名称、描述、标签和其他元数据
+- **多语言支持**：配置中英文描述
+- **导出功能**：下载转换后的文件，准备提交到 1Panel AppStore
 
-### Prerequisites
+## 快速开始
 
-- Node.js (v14 or higher)
-- pnpm (v9.11.0 or higher)
+### 前提条件
 
-### Installation
+- Node.js (v14 或更高版本)
+- pnpm (v9.11.0 或更高版本)
+
+### 安装
 
 ```bash
-# Clone the repository
+# 克隆仓库
 git clone https://github.com/arch3rPro/1Panel-Tools.git
 cd 1Panel-Tools
 
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Start the development server
+# 启动开发服务器
 pnpm dev
 ```
 
-The application will automatically redirect to the Docker Compose to 1Panel AppStore converter tool.
+应用程序将自动重定向到 Docker Compose 到 1Panel AppStore 的转换工具。
 
-## Usage
+## 使用方法
 
-1. **Input Docker Compose**: Paste your Docker Compose file into the editor
-2. **Configure Application**: Set the application name, key, description, and other metadata
-3. **Define Parameters**: Add parameters for your application (ports, environment variables, etc.)
-4. **Preview Conversion**: Review the generated 1Panel AppStore files
-5. **Export**: Download the converted files for use with 1Panel AppStore
+1. **输入 Docker Compose**：将您的 Docker Compose 文件粘贴到编辑器中
+2. **配置应用程序**：设置应用程序名称、键值、描述和其他元数据
+3. **定义参数**：为您的应用程序添加参数（端口、环境变量等）
+4. **预览转换**：查看生成的 1Panel AppStore 文件
+5. **导出**：下载转换后的文件，用于 1Panel AppStore
 
-### Docker Usage
+### Docker 使用方法
 
-#### Using Docker Run
+#### 使用 Docker Run
 
 ```bash
-# Pull and run the Docker image
+# 拉取并运行 Docker 镜像
 docker run -d --name 1panel-tools -p 8080:80 vuldocker/1panel-tools:latest
 ```
 
-Access the tool at http://localhost:8080
+访问工具：http://localhost:8080
 
-#### Using Docker Compose
+#### 使用 Docker Compose
 
-Use `docker-compose.yml` file with the following content and set port:
+使用项目 `docker-compose.yml` 文件，修改映射端口，内容如下：
 
 ```yaml
 version: '3'
@@ -70,17 +72,17 @@ services:
     restart: unless-stopped
 ```
 
-Then run:
+然后运行：
 
 ```bash
 docker-compose up -d
 ```
 
-Access the tool at http://localhost:8080
+访问工具：http://localhost:8080
 
-## 1Panel AppStore Format
+## 1Panel AppStore 格式
 
-The converter generates files following the 1Panel AppStore format:
+转换器生成的文件遵循 1Panel AppStore 格式：
 
 ```
 ├── app-key/
@@ -93,11 +95,11 @@ The converter generates files following the 1Panel AppStore format:
         └── scripts/
 ```
 
-## License
+## 许可证
 
-This project is licensed under the GNU GPLv3 License - see the LICENSE file for details.
+本项目采用 GNU GPLv3 许可证 - 详情请参阅 LICENSE 文件。
 
-## Acknowledgements
+## 致谢
 
-- Based on the IT-Tools project framework
-- Designed specifically for 1Panel AppStore application development
+- 基于 IT-Tools 项目框架
+- 专为 1Panel AppStore 应用程序开发设计
