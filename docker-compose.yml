@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  1panel-tools:
+    image: vuldocker/1panel-tools:latest
+    build: .
+    container_name: 1panel-tools
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - 1panel-tools-network
+
+networks:
+  1panel-tools-network:
+    driver: bridge

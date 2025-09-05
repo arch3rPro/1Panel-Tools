@@ -1,0 +1,58 @@
+home:
+  subtitle: Docker Compose 转 1Panel 应用商店创建器
+  home: 首页
+  toggleMenu: 切换菜单
+  nav:
+    about: 关于
+    darkMode: 深色模式
+    lightMode: 浅色模式
+    mode: 切换深色/浅色模式
+    aboutLabel: 关于
+    github: GitHub 仓库
+    githubRepository: IT-Tools GitHub 仓库
+
+tools:
+  categories:
+    favorite-tools: 收藏工具
+  docker-compose-to-1panel-appstore:
+    title: Docker Compose 转 1Panel 应用商店
+    description: 将 Docker Compose 文件转换为 1Panel 应用商店格式
+
+locale-selector:
+  select-a-language: 选择语言
+
+favoriteButton:
+  remove: 从收藏夹中移除
+  add: 添加到收藏夹
+
+search:
+  label: 搜索
+  placeholder: 搜索工具...
+
+textareaCopyable:
+  copy: 复制到剪贴板
+  copied: 已复制！
+  download: 下载
+
+inputCopyable:
+  copy: 复制
+  copied: 已复制！
+
+about:
+  content-fork: |
+    # 关于 1Panel 工具
+    
+    这是 IT-Tools 的专门版本，专注于 Docker Compose 到 1Panel 应用商店的转换。
+    
+    轻松将您的 Docker Compose 文件转换为 1Panel 应用商店格式。
+  alltools-title: 所有工具（{toolsCount} 个工具）
+  tools:
+    category: 分类
+    name: 名称
+    desc: 描述
+
+404:
+  notFound: 页面未找到
+  sorry: 抱歉，您访问的页面不存在。
+  maybe: 也许您想回到首页？
+  backHome: 回到首页

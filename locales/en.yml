@@ -1,0 +1,58 @@
+home:
+  subtitle: Docker Compose to 1Panel AppStore Creator
+  home: Home
+  toggleMenu: Toggle menu
+  nav:
+    about: About
+    darkMode: Dark mode
+    lightMode: Light mode
+    mode: Toggle dark/light mode
+    aboutLabel: About
+    github: GitHub repository
+    githubRepository: IT-Tools GitHub repository
+
+tools:
+  categories:
+    favorite-tools: Favorite tools
+  docker-compose-to-1panel-appstore:
+    title: Docker Compose to 1Panel AppStore
+    description: Convert Docker Compose files to 1Panel AppStore format
+
+locale-selector:
+  select-a-language: Select a language
+
+favoriteButton:
+  remove: Remove from favorites
+  add: Add to favorites
+
+search:
+  label: Search
+  placeholder: Search tools...
+
+textareaCopyable:
+  copy: Copy to clipboard
+  copied: Copied!
+  download: Download
+
+inputCopyable:
+  copy: Copy
+  copied: Copied!
+
+about:
+  content-fork: |
+    # About 1Panel Tools
+    
+    This is a specialized version of IT-Tools focused on Docker Compose to 1Panel AppStore conversion.
+    
+    Convert your Docker Compose files to 1Panel AppStore format with ease.
+  alltools-title: All tools ({toolsCount} tools)
+  tools:
+    category: Category
+    name: Name
+    desc: Description
+
+404:
+  notFound: Page not found
+  sorry: Sorry, the page you visited does not exist.
+  maybe: Maybe you want to go back to the home page?
+  backHome: Back to home
