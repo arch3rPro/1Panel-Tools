@@ -168,156 +168,149 @@ const convertedDockerCompose = computed(() => {
     // 移除 version 字段
     content = content.replace(/^version:\s*['"]?[^\n]*['"]?\s*\n?/m, '');
     
-    const lines = content.split('\n');
-    let inServices = false;
-    let currentServiceName = '';
+    // 1. 删除原docker-compose中所有networks配置
+    // 删除服务中的 networks 配置块（4个空格缩进）
+    content = content.replace(/^\s{4}networks:\s*\n(\s{6}.*\n)*/gm, '');
+    // 删除文件末尾的全局 networks 配置
+    content = content.replace(/\n\s*networks:\s*\n(\s{2}.*\n)*\s*$/g, '');
+    
+    // 2. 处理容器名称
     let serviceCount = 0;
-    const serviceNames = [];
-    
-    // 找到所有服务名称
+    const lines = content.split('\n');
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (line.trim() === 'services:') {
-        inServices = true;
-        continue;
-      }
-      if (inServices) {
-        if (line.trim() && !line.startsWith(' ') && !line.startsWith('\t')) {
-          inServices = false;
-          break;
-        }
-        const match = line.match(/^\s{2}([a-zA-Z0-9_-]+):\s*$/);
-        if (match) {
-          const serviceName = match[1];
-          if (!serviceNames.includes(serviceName)) {
-            serviceNames.push(serviceName);
-          }
-        }
-      }
-    }
-    
-    // 处理容器名称转换
-    inServices = false;
-    currentServiceName = '';
-    serviceCount = 0;
-    
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      
-      if (line.trim() === 'services:') {
-        inServices = true;
-        continue;
-      }
-      
-      if (inServices) {
-        if (line.trim() && !line.startsWith(' ') && !line.startsWith('\t')) {
-          inServices = false;
-          continue;
-        }
+      // 匹配服务定义行（两个空格缩进的服务名）
+      const serviceMatch = lines[i].match(/^(\s{2})([a-zA-Z0-9_-]+):\s*$/);
+      if (serviceMatch) {
+        serviceCount++;
+        const indent = serviceMatch[1];
+        const serviceName = serviceMatch[2];
+        const containerName = serviceCount === 1 ? '${CONTAINER_NAME}' : `\${CONTAINER_NAME}-${serviceName}`;
         
-        const match = line.match(/^\s{2}([a-zA-Z0-9_-]+):\s*$/);
-        if (match && serviceNames.includes(match[1])) {
-          currentServiceName = match[1];
-          serviceCount++;
-        }
-        
-        // 处理 container_name：第一个服务用 ${CONTAINER_NAME}，其他服务用 ${CONTAINER_NAME}-服务名
-        if (line.includes('container_name:') && currentServiceName) {
-          const indent = line.search(/\S/);
-          const containerName = serviceCount === 1 ? '${CONTAINER_NAME}' : `\${CONTAINER_NAME}-${currentServiceName}`;
-          lines[i] = `${' '.repeat(indent)}container_name: ${containerName}`;
-        }
-        
-        // 如果没有 container_name，添加一个
-        if (currentServiceName && (line.includes('image:') || line.includes('build:'))) {
-          const indent = line.search(/\S/);
-          const containerName = serviceCount === 1 ? '${CONTAINER_NAME}' : `\${CONTAINER_NAME}-${currentServiceName}`;
-          
-          let hasContainerName = false;
-          for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
-            if (lines[j].includes('container_name:')) {
-              hasContainerName = true;
-              break;
-            }
-            if (lines[j].trim() && !lines[j].startsWith(' ') && !lines[j].startsWith('\t')) {
-              break;
-            }
-          }
-          
-          if (!hasContainerName) {
-            lines.splice(i + 1, 0, `${' '.repeat(indent)}container_name: ${containerName}`);
-          }
-        }
-        
-        // 处理端口映射
-        if (line.includes('ports:')) {
-          for (let j = i + 1; j < lines.length; j++) {
-            if (lines[j].trim().startsWith('- ')) {
-              const portMatch = lines[j].match(/^(\s*- \s*["']?)(\d+)(:\d+)(["']?)\s*$/);
-              if (portMatch) {
-                const prefix = portMatch[1];
-                const internalPort = portMatch[3];
-                const suffix = portMatch[4];
-                lines[j] = `${prefix}\${PANEL_APP_PORT_HTTP}${internalPort}${suffix}`;
+        // 查找 image 或 build 行并添加 container_name
+        for (let j = i + 1; j < lines.length; j++) {
+          if (lines[j].includes('image:') || lines[j].includes('build:')) {
+            // 检查是否已存在 container_name
+            let hasContainerName = false;
+            for (let k = j + 1; k < Math.min(j + 10, lines.length); k++) {
+              if (lines[k].includes('container_name:')) {
+                hasContainerName = true;
+                break;
               }
-              break;
-            } else if (lines[j].trim() && !lines[j].startsWith(' ')) {
-              break;
+              // 如果遇到下一个服务或配置块结束，则停止检查
+              if (lines[k].trim() && !lines[k].startsWith(' ') && !lines[k].startsWith('\t')) {
+                break;
+              }
             }
-          }
-        }
-        
-        // 添加网络配置
-        if (currentServiceName && (line.includes('restart:') || line.includes('depends_on:'))) {
-          const indent = line.search(/\S/);
-          
-          let hasNetworks = false;
-          for (let j = i - 5; j < Math.min(i + 10, lines.length); j++) {
-            if (j >= 0 && lines[j].includes('networks:')) {
-              hasNetworks = true;
-              break;
+            if (!hasContainerName) {
+              lines.splice(j + 1, 0, `${indent}${indent}container_name: ${containerName}`);
             }
-          }
-          
-          if (!hasNetworks) {
-            lines.splice(i + 1, 0, `${' '.repeat(indent)}networks:`, `${' '.repeat(indent + 2)}- 1panel-network`);
+            break;
           }
         }
       }
     }
-    
     content = lines.join('\n');
     
-    // 确保包含 1Panel 网络配置
-    if (!content.includes('networks:') || !content.includes('1panel-network:')) {
-      content += `\n\nnetworks:\n  1panel-network:\n    external: true`;
+    // 3. 处理端口映射 - 只处理第一个服务的端口映射
+    let firstServiceFound = false;
+    content = content.replace(/^(\s*- \s*["']?)(\d+)(:\d+)(["']?)\s*$/gm, (match, prefix, port, internalPort, suffix) => {
+      // 只处理第一个服务的端口映射
+      if (!firstServiceFound) {
+        firstServiceFound = true;
+        return `${prefix}\${PANEL_APP_PORT_HTTP}${internalPort}${suffix}`;
+      }
+      // 其他服务的端口映射保持不变
+      return match;
+    });
+    
+    // 4. 给每个服务添加1panel networks配置（精确处理）
+    // 首先找到所有服务的名称和位置
+    const serviceInfo = [];
+    const lines2 = content.split('\n');
+    
+    // 确定 services 块的范围
+    let servicesStartIndex = -1;
+    let servicesEndIndex = lines2.length;
+    
+    for (let i = 0; i < lines2.length; i++) {
+      const line = lines2[i];
+      if (line.trim() === 'services:') {
+        servicesStartIndex = i;
+      } else if (servicesStartIndex !== -1 && line.trim() && !line.startsWith(' ') && !line.startsWith('\t')) {
+        // 遇到下一个顶级配置块
+        servicesEndIndex = i;
+        break;
+      }
     }
     
-    // 添加标签
-    if (!content.includes('createdBy: "Apps"')) {
-      const newLines = content.split('\n');
-      let inFirstService = false;
-      let serviceIndent = 0;
+    // 只在 services 块内查找服务，并确保只识别真正的服务（有image或build配置的）
+    for (let i = servicesStartIndex + 1; i < servicesEndIndex; i++) {
+      const serviceMatch = lines2[i].match(/^(\s{2})([a-zA-Z0-9_-]+):\s*$/);
+      if (serviceMatch) {
+        // 检查该服务下面是否有image或build配置
+        let hasImageOrBuild = false;
+        for (let j = i + 1; j < servicesEndIndex; j++) {
+          // 如果遇到下一个服务，则停止检查
+          if (lines2[j].match(/^(\s{2})([a-zA-Z0-9_-]+):\s*$/)) {
+            break;
+          }
+          // 检查是否有image或build配置
+          if (lines2[j].includes('image:') || lines2[j].includes('build:')) {
+            hasImageOrBuild = true;
+            break;
+          }
+        }
+        
+        // 只有包含image或build的服务才是真正的服务
+        if (hasImageOrBuild) {
+          serviceInfo.push({
+            index: i,
+            name: serviceMatch[2],
+            indent: serviceMatch[1]
+          });
+        }
+      }
+    }
+    
+    // 从后往前处理服务（避免索引变化影响）
+    for (let i = serviceInfo.length - 1; i >= 0; i--) {
+      const service = serviceInfo[i];
+      const serviceIndex = service.index;
       
-      for (let i = 0; i < newLines.length; i++) {
-        const line = newLines[i];
-        if (line.includes('services:')) {
-          continue;
-        }
-        if (line.trim() && !line.startsWith(' ') && inFirstService) {
-          break;
-        }
-        if (line.trim() && line.startsWith(' ') && !inFirstService) {
-          inFirstService = true;
-          serviceIndent = line.search(/\S/);
-        }
-        if (inFirstService && (line.includes('networks:') || line.includes('depends_on:') || i === newLines.length - 1)) {
-          newLines.splice(i, 0, `${' '.repeat(serviceIndent + 2)}labels:`, `${' '.repeat(serviceIndent + 4)}createdBy: "Apps"`);
+      // 找到服务块的结束位置
+      let serviceEndIndex = servicesEndIndex;
+      for (let j = serviceIndex + 1; j < servicesEndIndex; j++) {
+        // 检查是否是下一个服务的开始（两个空格缩进的服务名）
+        if (lines2[j].match(/^(\s{2})([a-zA-Z0-9_-]+):\s*$/)) {
+          serviceEndIndex = j;
           break;
         }
       }
-      content = newLines.join('\n');
+      
+      // 检查是否已存在 networks 配置
+      let hasNetworks = false;
+      for (let j = serviceIndex + 1; j < serviceEndIndex; j++) {
+        // 检查是否是 networks: 配置行（四个空格缩进）
+        if (lines2[j].match(/^\s{4}networks:\s*$/)) {
+          hasNetworks = true;
+          break;
+        }
+      }
+      
+      // 如果没有 networks 配置，则添加
+      if (!hasNetworks) {
+        // 在服务块结束前插入 networks 配置，确保正确的缩进
+        lines2.splice(serviceEndIndex, 0, '    networks:', '      - 1panel-network');
+      }
     }
+    
+    content = lines2.join('\n');
+    
+    // 5. 末尾处设置networks全局网络
+    content = content.trim() + `\n\nnetworks:\n  1panel-network:\n    external: true`;
+    
+    // 6. 添加标签
+    content = content.replace(/(\s{4}networks:\s*\n\s{6}- 1panel-network)/g, '$1\n    labels:\n      createdBy: "Apps"');
     
     return content;
   } catch (e) {
