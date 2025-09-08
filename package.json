@@ -1,7 +1,7 @@
 {
   "name": "docker-compose-to-1panel-appstore",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "packageManager": "pnpm@9.11.0",
   "description": "Docker Compose to 1Panel AppStore converter tool",
   "author": "Corentin Th <corentin.thomasset74+it-tools@gmail.com> (https://corentin.tech)",
