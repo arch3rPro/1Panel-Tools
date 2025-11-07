@@ -239,10 +239,7 @@ const appDeclarationYaml = computed(() => {
       name: appForm.value.name,
       tags: chineseTagNames,
       title: appForm.value.description.zh || appForm.value.name,
-      description: {
-        en: appForm.value.description.en,
-        zh: appForm.value.description.zh,
-      },
+      description: appForm.value.description.zh,
       additionalProperties: {
         key: appForm.value.key,
         name: appForm.value.name,
