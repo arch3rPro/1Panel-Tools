@@ -323,9 +323,9 @@ const convertedDockerCompose = computed(() => {
         
         // 3.4 添加 labels
         if (!service.labels) {
-          service.labels = [];
+          service.labels = {};
         }
-        service.labels.push('createdBy: "Apps"');
+        service.labels.createdBy = "Apps";
         
         // 标记第一个服务已处理
         if (firstService) {
