@@ -52,7 +52,7 @@ pnpm dev
 
 ```bash
 # 拉取并运行 Docker 镜像
-docker run -d --name 1panel-tools -p 8080:80 vuldocker/1panel-tools:latest
+docker run -d --name 1panel-tools -p 8080:8080 vuldocker/1panel-tools:latest
 ```
 
 访问工具：http://localhost:8080

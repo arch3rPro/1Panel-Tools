@@ -9,7 +9,7 @@ import Unocss from 'unocss/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import VueI18n from '@intlify/unplugin-vue-i18n/vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+// import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   plugins: [
@@ -45,10 +45,10 @@ export default defineConfig({
       dts: true,
     }),
     Unocss(),
-    nodePolyfills({
-      include: ['buffer', 'process', 'util'],
-      globals: { Buffer: true, global: true, process: true },
-    }),
+    // nodePolyfills({
+    //   include: ['buffer', 'process', 'util'],
+    //   globals: { Buffer: true, global: true, process: true },
+    // }),
   ],
   resolve: {
     alias: {

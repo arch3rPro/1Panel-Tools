@@ -65,8 +65,8 @@ const tools = computed<ToolCategory[]>(() => [
           <div>
             1Panel-Tools
 
-            <c-link target="_blank" rel="noopener" href="https://github.com/arch3rPro/1Panel-Tools/releases/tag/v0.2.0">
-              v0.2.0
+            <c-link target="_blank" rel="noopener" href="https://github.com/arch3rPro/1Panel-Tools/releases/tag/v0.3.0">
+              v0.3.0
             </c-link>
 
             <template v-if="commitSha && commitSha.length > 0">

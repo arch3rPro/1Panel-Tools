@@ -51,7 +51,7 @@ The application will automatically redirect to the Docker Compose to 1Panel AppS
 
 ```bash
 # Pull and run the Docker image
-docker run -d --name 1panel-tools -p 8080:80 vuldocker/1panel-tools:latest
+docker run -d --name 1panel-tools -p 8080:8080 vuldocker/1panel-tools:latest
 ```
 
 Access the tool at http://localhost:8080
